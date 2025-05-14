@@ -7,6 +7,7 @@ let playerPos = 180;
 let score = 0;
 let gameOver = false;
 let paused = false;
+let keys = {};
 
 let enemyInterval = 1000;
 let enemySpeed = 5;
@@ -17,30 +18,49 @@ const shotCooldown = 5000; // 5 segundos
 let lastDashTime = 0;
 const dashCooldown = 8000; // 8 segundos
 
-
-
-// Movimento do jogador
+// Sistema de movimento melhorado
 document.addEventListener("keydown", (e) => {
   if (e.key === "p" || e.key === "P") {
     togglePause();
     return;
   }
+  if (e.code === "Space") {
+    keys["Space"] = true;
+  } else {
+    keys[e.key] = true;
+    // Movimento imediato ao pressionar a tecla
+    if (!gameOver && !paused) {
+      if (e.key === "ArrowLeft" && playerPos > 0) {
+        playerPos = Math.max(0, playerPos - 20);
+      } else if (e.key === "ArrowRight" && playerPos < 360) {
+        playerPos = Math.min(360, playerPos + 20);
+      }
+      player.style.left = playerPos + "px";
+    }
+  }
+});
 
+document.addEventListener("keyup", (e) => {
+  if (e.code === "Space") {
+    keys["Space"] = false;
+  } else {
+    keys[e.key] = false;
+  }
+});
+
+// Movimento suave do jogador
+function updatePlayerPosition() {
   if (gameOver || paused) return;
 
-  if (e.key === "ArrowLeft" && playerPos > 0) {
-    playerPos -= 20;
-  } else if (e.key === "ArrowRight" && playerPos < 360) {
-    playerPos += 20;
-  } else if (e.key === "ArrowUp") {
+  if (keys["ArrowUp"]) {
     shoot();
-  } else if (e.code === "Space") {
+  }
+  if (keys["Space"]) {
     dash();
   }
-  
 
-  player.style.left = playerPos + "px";
-});
+  requestAnimationFrame(updatePlayerPosition);
+}
 
 // Botão de pause
 pauseBtn.addEventListener("click", togglePause);
@@ -55,7 +75,7 @@ function createEnemy() {
   const enemy = document.createElement("div");
   enemy.classList.add("enemy");
   enemy.style.left = Math.floor(Math.random() * 10) * 40 + "px";
-  enemy.dataset.alive = "true"; // Marca o inimigo como ativo
+  enemy.dataset.alive = "true";
   game.appendChild(enemy);
 
   let enemyTop = 0;
@@ -70,10 +90,14 @@ function createEnemy() {
       enemyTop += enemySpeed;
       enemy.style.top = enemyTop + "px";
 
-      if (enemyTop > 560) {
+      // Verificação de colisão apenas na área visual do bloco
+      if (enemyTop >= 460 && enemyTop <= 500) { // Verifica apenas quando o bloco está na área de colisão
+        const enemyLeft = parseInt(enemy.style.left);
+        const collisionDistance = Math.abs(enemyLeft - playerPos);
+        
         if (
           enemy.dataset.alive === "true" &&
-          Math.abs(parseInt(enemy.style.left) - playerPos) < 40
+          collisionDistance < 35
         ) {
           endGame();
           return;
@@ -107,9 +131,10 @@ function gameLoop() {
       scoreDisplay.textContent = "Pontos: " + score;
       lastScoreTime = now;
 
+      // Ajuste na dificuldade mais gradual
       if (score % 10 === 0 && enemyInterval > 300) {
-        enemyInterval -= 50;
-        enemySpeed += 1;
+        enemyInterval -= 30; // Reduzido de 50 para 30
+        enemySpeed += 0.5; // Reduzido de 1 para 0.5
       }
     }
   }
@@ -126,7 +151,7 @@ function endGame() {
 
 // Start
 requestAnimationFrame(gameLoop);
-
+requestAnimationFrame(updatePlayerPosition);
 
 // função shoot
 function shoot() {
@@ -135,10 +160,8 @@ function shoot() {
   
     lastShotTime = now;
   
-    // Aplica efeito de cooldown visual
     player.classList.add("cooldown");
   
-    // Remove o efeito visual após o cooldown
     setTimeout(() => {
       player.classList.remove("cooldown");
     }, shotCooldown);
@@ -196,13 +219,11 @@ function shoot() {
   
     lastDashTime = now;
   
-    // Efeito visual do dash (amarelo + piscar)
     player.classList.add("dash-cooldown");
     setTimeout(() => {
       player.classList.remove("dash-cooldown");
     }, dashCooldown);
   
-    // Dash na direção mais próxima da borda (pra frente, se possível)
     if (playerPos <= 280) {
       playerPos += 80;
     } else if (playerPos >= 80) {
