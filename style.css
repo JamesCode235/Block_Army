@@ -6,14 +6,25 @@ body {
     text-align: center;
   }
   
+  #game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 20px auto;
+    max-width: 900px;
+    position: relative;
+  }
+  
   #game {
     position: relative;
     width: 400px;
-    height: 600px;
+    height: 500px;
     background: #222;
-    margin: 20px auto;
     overflow: hidden;
     border: 2px solid #fff;
+    margin: 0 auto;
+    border-radius: 5px;
   }
   
   #player {
@@ -53,6 +64,27 @@ body {
   #pauseBtn:hover {
     background: #666;
   }
+
+  #instructions {
+    position: absolute;
+    right: -80px;
+    padding: 15px;
+    background: #333;
+    border-radius: 3px;
+    width: 200px;
+    height: fit-content;
+  }
+
+  #instructions h3 {
+    margin: 0 0 10px 0;
+    color: #fff;
+  }
+
+  #instructions p {
+    margin: 5px 0;
+    color: #ddd;
+  }
+
   .bullet {
     position: absolute;
     width: 10px;
