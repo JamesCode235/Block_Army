@@ -1,0 +1,80 @@
+body {
+    margin: 0;
+    background: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  
+  #game {
+    position: relative;
+    width: 400px;
+    height: 600px;
+    background: #222;
+    margin: 20px auto;
+    overflow: hidden;
+    border: 2px solid #fff;
+  }
+  
+  #player {
+    position: absolute;
+    bottom: 10px;
+    left: 180px;
+    width: 40px;
+    height: 40px;
+    background: #00f;
+    border-radius: 5px;
+  }
+  
+  .enemy {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: #f00;
+    top: 0;
+    border-radius: 5px;
+  }
+  
+  #score {
+    font-size: 20px;
+    margin-top: 10px;
+  }
+  #pauseBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #444;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  #pauseBtn:hover {
+    background: #666;
+  }
+  .bullet {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+  }
+  
+  /* Efeito de piscar */
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+  }
+  
+  .cooldown {
+    background-color: gray !important;
+    animation: blink 1s infinite;
+  }
+  .dash-cooldown {
+    background-color: gold !important;
+    animation: blink 0.5s infinite;
+  }
+  
+  
